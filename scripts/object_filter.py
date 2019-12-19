@@ -8,9 +8,9 @@ class Object_Filter:
     def __init__(self):
         #Set up publisher and subscriber
         rp.Subscriber("localized_pointcloud", PointCloud, self.pc_callback)
-        self.filtered_pub = rp.Publisher("filtered_poincloud", PointCloud, queue_size = 4)
+        self.filtered_pub = rp.Publisher("filtered_poincloud", PointCloud, queue_size = 1)
 
-        #Set up room object
+        #Set up room object. Hard coded values for now.
         self.room = Room()
         self.room.fill_points_array([(0,0), (0,6), (8,6), (8,0)])
         self.room.update_poly()
@@ -30,4 +30,12 @@ class Object_Filter:
                 new_points.append(point)
         cloud_out.points = new_points
 
+        #Publishes updated cloud
         self.filtered_pub.publish(cloud_out)
+
+
+if __name__ == "__main__":
+    rp.init_node('object_filter', anonymous=True)
+    object_filter = Object_Filter()
+    while not rp.is_shutdown():
+        rp.spin()
