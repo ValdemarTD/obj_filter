@@ -14,12 +14,13 @@ private:
   ros::Subscriber scan_in;
   tf::TransformListener tf_listener;
   laser_geometry::LaserProjection projector;
-  string frame;
+  std::string frame;
   void scan_callback(const sensor_msgs::LaserScan::ConstPtr&);
 
 public:
-  void set_input_topic(string, &ros::NodeHandle);
-  void set_output_topic(string, &ros::NodeHandle);
+  void set_input_topic(std::string, ros::NodeHandle*);
+  void set_output_topic(std::string, ros::NodeHandle*);
+  void set_frame(std::string);
 };
 
 #endif

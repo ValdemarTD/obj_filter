@@ -21,22 +21,22 @@ void TransformHandler::scan_callback(const sensor_msgs::LaserScan::ConstPtr& sca
   }
 
   sensor_msgs::PointCloud cloud;
-  projector.transformLaserScanToPointCloud(frame , *scan_in, cloud, listener);
+  projector.transformLaserScanToPointCloud(frame, *scan_in, cloud, tf_listener);
 
   cloud_out.publish(cloud);
 }
 
 //Sets the input topic and creates a publisher for that topic
-void TransformHandler::set_input_topic(string topic, &ros::NodeHandle nh){
-  scan_in = nh->subscribe(topic, 1, scan_callback);
+void TransformHandler::set_input_topic(std::string topic, ros::NodeHandle * nh){
+  scan_in = nh->subscribe(topic, 1, &TransformHandler::scan_callback, this);
 }
 
 //Sets the output topic and initializes a subscriber to that topic
-void TransformHandler::set_output_topic(string, topic &ros::NodeHandle nh){
+void TransformHandler::set_output_topic(std::string topic, ros::NodeHandle * nh){
   cloud_out = nh->advertise<sensor_msgs::PointCloud>(topic, 1);
 }
 
 //Sets the frame the pointcloud will be set in
-void TransformHandler::set_frame(string frame_in){
+void TransformHandler::set_frame(std::string frame_in){
   frame = frame_in;
 }

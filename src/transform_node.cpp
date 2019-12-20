@@ -3,10 +3,10 @@
 #include <string>
 
 int main(int argc, char** argv){
-  ros::init(argc, argv, "scan_to_pointcloud_transform")
+  ros::init(argc, argv, "scan_to_pointcloud_transform");
   ros::NodeHandle node;
   TransformHandler transformer;
-  string frame_name, topic_out, topic_in;
+  std::string frame_name, topic_out, topic_in;
 
   //Initialize strings
   frame_name = "map";
@@ -15,8 +15,8 @@ int main(int argc, char** argv){
 
   //Set internal variables
   transformer.set_frame(frame_name);
-  transformer.set_output_topic(topic_out, node);
-  transformer.set_input_topic(topic_in, node);
+  transformer.set_output_topic(topic_out, &node);
+  transformer.set_input_topic(topic_in, &node);
 
   //Prevents node from exiting until shutdown
   ros::spin();
