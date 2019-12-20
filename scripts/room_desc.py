@@ -10,14 +10,14 @@ class Room:
     def __init__(self):
         self.points = []
         self.edge_boxes = []
-        self.edge_margin = 0.1
+        self.edge_margin = 0.45
 
     #Takes in an array of XY coordinates (or potentially XYZ, which are interpreted
     #in the same way by Shapely) and converts it to a series of XY Point objects
     def fill_points_array(self, point_arr):
         self.points = []
         for new_point in point_arr:
-            self.points.append(Point(new_point[0], new_point[1]))
+            self.points.append([new_point[0], new_point[1]])
 
     #Updates the room polygon with the most recent set of points
     def update_poly(self):
@@ -38,4 +38,4 @@ class Room:
     #Checks if a point is past the wall or in the wall bounding box
     def has_inside(self, point_to_check):
         new_point = Point(point_to_check[0], point_to_check[1])
-        return self.room_poly.contains(new_point)
+        return self.checked_box.contains(new_point)
