@@ -1,0 +1,9 @@
+<launch>
+  <node name="transform_node" pkg="obj_filter" type="transform_node"/>
+  <node name="object_filter_node" pkg="obj_filter" type="object_filter.py"/>
+  <node name="pointcloud_to_laserscan_node" pkg="pointcloud_to_laserscan" type="pointcloud_to_laserscan_node">
+    <rosparam file="$(find obj_filter)/config/pointcloud_to_laserscan.yaml"/>
+    <remap from="cloud_in" to="filtered_pointcloud2"/>
+    <remap from="scan" to="object_filtered_scan"/>
+  </node>
+</launch>

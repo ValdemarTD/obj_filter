@@ -11,7 +11,7 @@ class Object_Filter:
     def __init__(self):
         #Set up publisher and subscriber
         rp.Subscriber("localized_pointcloud", PointCloud, self.pc_callback)
-        self.filtered_pub = rp.Publisher("filtered_poincloud", PointCloud, queue_size = 1)
+        self.filtered_pub = rp.Publisher("filtered_pointcloud", PointCloud, queue_size = 1)
         self.polyon_pub = rp.Publisher("room_poly", PolygonStamped, queue_size=1)
         #Set up room object. Hard coded values for now.
         self.points = [(0,0), (0,6), (8,6), (8,0)]

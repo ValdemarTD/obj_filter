@@ -1,0 +1,7 @@
+min_height: -2.0
+max_height: 4.0
+angle_min: -3.14
+angle_max: 3.14
+target_frame: base_link
+range_min: 0.001
+range_max: 50.0
