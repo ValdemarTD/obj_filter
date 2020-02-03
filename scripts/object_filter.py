@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import rospy as rp
+import numpy as np
 from room_desc import Room
 from sensor_msgs.msg import PointCloud
 from geometry_msgs.msg import Point32
@@ -7,7 +8,7 @@ from geometry_msgs.msg import Polygon
 from geometry_msgs.msg import PolygonStamped
 from std_msgs.msg import Header
 
-class Object_Filter:
+class ObjectFilter:
     def __init__(self):
         #Set up publisher and subscriber
         rp.Subscriber("localized_pointcloud", PointCloud, self.pc_callback)
@@ -52,9 +53,12 @@ class Object_Filter:
         polygon.header.frame_id = "/map"
         self.polyon_pub.publish(polygon)
 
+    #Function to get the room class.
+    def get_room(self):
+        return self.room
 
 if __name__ == "__main__":
     rp.init_node('object_filter', anonymous=True)
-    object_filter = Object_Filter()
+    object_filter = ObjectFilter()
     while not rp.is_shutdown():
         rp.spin()

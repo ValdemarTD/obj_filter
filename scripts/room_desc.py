@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 from shapely.geometry import *
 from shapely.ops import split
+from shapely.prepared import prep
 from shapely import speedups
 from numpy import array
 
@@ -28,10 +29,13 @@ class Room:
         for new_point in point_arr:
             self.points.append([new_point[0], new_point[1]])
 
-    #Updates the room polygon with the most recent set of points
+    #Updates the room polygon with the most recent set of points and creates
+    #both a box for checking scan points and MCL generated points
     def update_poly(self):
         self.room_poly = Polygon(self.points)
+        self.room_poly_prepped = prep(self.room_poly)
         self.make_checked_box()
+        self.bounding_box = self.room_poly.envelope
 
     #Manually sets the room polygon from another polygon
     def set_poly(self, poly_in):
@@ -41,13 +45,19 @@ class Room:
     #Creates a polygon inside the room object. We offset inwards by the number
     #of meters specified by self.edge_margin to account for sensor noise
     def make_checked_box(self):
-        self.checked_box = Polygon(self.room_poly.exterior.parallel_offset(self.edge_margin, 'right'))
+        self.checked_box = prep(Polygon(self.room_poly.exterior.parallel_offset(self.edge_margin, 'right')))
 
 
-    #Checks if a point is past the wall or in the wall bounding box
-    def has_inside(self, point_to_check):
+    #Checks if a point is within the room and, if inner_poly is True, at least
+    #self.edge_margin meters from the walls.
+    #self.checked_box.contains() is used for filtering out pointcloud points while
+    #self.room_poly.contains() is used to filter out randomly generated points
+    #from our Monte-Carlo localizer
+    def has_inside(self, point_to_check, inner_poly=True):
         new_point = Point(point_to_check[0], point_to_check[1])
-        return self.checked_box.contains(new_point)
+        if inner_poly:
+            return self.checked_box.contains(new_point)
+        return self.room_poly_prepped.contains(new_point)
 
     def get_room_segment(self, cutting_poly=None, boundary_points=None):
         #Makes sure that we have a polygon to cut with, either from being
@@ -80,3 +90,8 @@ class Room:
             if test_poly.relate_pattern(cut, '102FF1FF2'):
                 to_return.append(array(cut))
         return to_return
+
+    #Returns a set of points representing the minimum rectangle paralell to the
+    #coordinate axes that contains the room polygon
+    def get_bounding_box_points(self):
+        return array(self.bounding_box.exterior)
